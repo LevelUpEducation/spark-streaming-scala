@@ -5,7 +5,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.twitter.TwitterUtils
 import util.Twitter
 
-object TransformOperationExercise {
+object TransformOperationSolution {
 
 	/**
 	  * Exercise:
@@ -17,6 +17,20 @@ object TransformOperationExercise {
 	  * @param args
 	  */
 	def main(args: Array[String]): Unit = {
-		// TODO: add your solution here
+		Twitter.initialize()
+
+		val ssc = new StreamingContext("local[*]", "TransformOperationExercise", Seconds(2))
+
+		Logger.getRootLogger.setLevel(Level.ERROR)
+
+		val tweets = TwitterUtils.createStream(ssc, None)
+
+		tweets.filter(_.getInReplyToScreenName != null)
+			.map(tweet => tweet.getInReplyToScreenName -> tweet.getText.length)
+			.transform(_.sortByKey())
+			.print
+
+		ssc.start
+		ssc.awaitTermination()
 	}
 }

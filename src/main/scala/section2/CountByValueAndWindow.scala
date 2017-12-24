@@ -15,12 +15,14 @@ object CountByValueAndWindow {
 
 		val tweets = TwitterUtils.createStream(ssc, None)
 
-		tweets.map(_.getHashtagEntities.head.getText)
+		ssc.checkpoint("checkpoints")
+
+		tweets.filter(_.getHashtagEntities.length > 0)
+			.map(_.getHashtagEntities.head.getText.length)
 			.countByValueAndWindow(Seconds(5), Seconds(3))
 			.print
 
 		ssc.start
 		ssc.awaitTermination()
 	}
-
 }

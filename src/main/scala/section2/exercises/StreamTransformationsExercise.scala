@@ -1,10 +1,5 @@
 package section2.exercises
 
-import org.apache.log4j.{Level, Logger}
-import org.apache.spark.streaming.twitter.TwitterUtils
-import org.apache.spark.streaming.{Seconds, StreamingContext}
-import util.Twitter
-
 object StreamTransformationsExercise {
 
 	/**
@@ -16,19 +11,6 @@ object StreamTransformationsExercise {
 	  * @param args
 	  */
 	def main(args: Array[String]): Unit = {
-		Twitter.initialize()
-
-		val ssc = new StreamingContext("local[*]", "StreamTransformationsExercise", Seconds(1))
-
-		Logger.getRootLogger.setLevel(Level.ERROR)
-
-		val tweets = TwitterUtils.createStream(ssc, None)
-
-		tweets.filter(_.isRetweet)
-		   .count
-			.print
-
-		ssc.start
-		ssc.awaitTermination()
+		// TODO: add your solution here
 	}
 }
