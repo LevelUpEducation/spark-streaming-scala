@@ -13,13 +13,13 @@ object UpdateStateByKeySolution {
 
 		Logger.getRootLogger.setLevel(Level.ERROR)
 
-		val titleLengths = RedditUtils.createPageStream(Reddit.auth, List("sports"), ssc, pollingPeriodInSeconds = 2)
+		val titleLengths = RedditUtils.createPageStream(Reddit.auth, List("and"), ssc, pollingPeriodInSeconds = 2)
 			.filter(_.data.title.isDefined)
 			.map(r => (r.data.title.get.split(" ").length + " words", 1))
 
-		titleLengths//.updateStateByKey(updateFunction)
+		titleLengths.updateStateByKey(updateFunction)
 			.foreachRDD{rdd =>
-				println(s"Most common word count in Reddit titles (${rdd.count}):")
+				println(s"Most common word count in Reddit titles (${rdd.count} new titles):")
 				rdd.sortBy(_._2, ascending = false)
 					.foreach(r => println(r._1 + ": " + r._2))
 			}
