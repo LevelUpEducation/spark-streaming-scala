@@ -15,9 +15,10 @@ object SparkStreamingBasicsExercise {
 	  * 5 minutes.
 	  *
 	  * Spark Streaming functions you might want to use:
-	  * countByValueAndWindow, filter, foreachRDD, map, transform, window
+	  * countByValue, filter, foreachRDD, map, transform, window
 	  *
-	  * There may be more than one way to solve these requirements.
+	  * The countByValue() function is similar to countByValueAndWindow(), just without the
+	  * window segmentation. There may be more than one way to solve these requirements.
 	  *
 	  * Example Output:
 	  *

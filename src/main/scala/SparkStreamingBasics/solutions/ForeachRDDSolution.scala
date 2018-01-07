@@ -33,7 +33,6 @@ object ForeachRDDSolution {
 
 		val stream = RedditUtils.createPageStream(Reddit.auth, List("sports"), ssc, pollingPeriodInSeconds=2)
 
-		var count = 1
 		stream.foreachRDD { rdd =>
 				rdd.foreach(r => println(r.data.url.get + " -> " + r.data.title.get))
 			}

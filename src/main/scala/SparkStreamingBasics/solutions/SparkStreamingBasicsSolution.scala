@@ -19,7 +19,7 @@ object SparkStreamingBasicsSolution {
 		ssc.checkpoint("checkpoints")
 
 		tweets
-			.window(Seconds(300), Seconds(10))
+			.window(Seconds(300), Seconds(10)) // define the larger window early, to ensure you have enough data to work with
 			.filter(t => t.getGeoLocation != null && t.getPlace != null)
 			.map(t => (t.getGeoLocation.getLatitude, t.getGeoLocation.getLongitude, t.getPlace.getFullName))
 			.transform{rdd =>
@@ -34,7 +34,7 @@ object SparkStreamingBasicsSolution {
 					rdd.filter(t => t._1 > avgLatitude && t._2 > avgLongitude).map(_._3)
 				} else rdd.map(_._3)
 			}
-			.countByValueAndWindow(Seconds(300), Seconds(10)) // .countByValue() would work as well
+			.countByValue()
 	   	.foreachRDD(_.foreach(println))
 
 		ssc.start
