@@ -10,7 +10,12 @@ object CheckpointingExercise {
 	  * by the count in descending order with the help of the transform() or
 	  * foreachRDD() function.
 	  * Use a window duration of twenty seconds and print the output every five
-	  * seconds
+	  * seconds.
+	  * To ensure the Checkpointing works, please stop the execution a few
+	  * times after it ran for a while and start it again to make sure it picks 
+	  * up at the point where it left off. This requires that you obtain the
+	  * streaming context using StreamingContext.getOrCreate() using a custom
+	  * function as a parameter.
 	  *
 	  * Example Output:
 	  *

@@ -19,15 +19,13 @@ object StreamDatasetJoin {
 			.filter(_.data.subreddit != null)
 			.window(Minutes(1), Seconds(12))
 			.map(r => (r.data.subreddit.get, 1))
-			.foreachRDD { rdd =>
-				println("\nMost common subreddits (topics) in the last minute:")
-				rdd.reduceByKey(_ + _)
+			.transform( _.reduceByKey(_ + _)
 					.map(r => if (r._2 > 3) (4, r._1) else r.swap)
 					.join(countTexts)
 					.sortByKey(ascending = false)
 					.map(_._2)
-					.foreach(println)
-			}
+			)
+	   	.print
 
 		ssc.start
 		ssc.awaitTermination()
