@@ -36,21 +36,6 @@ object TweetProducer {
 						.collect().mkString("\n") )
 
 				Files.move(tmpPath.toPath, path.toPath, StandardCopyOption.ATOMIC_MOVE)
-
-				/* Maybe replace with something like this:
-				val saveFunc = (rdd: RDD[T], time: Time) => {
-			      val file = rddToFileName(prefix, suffix, time)
-			      rdd.saveAsTextFile(file)
-			   }
-			   this.foreachRDD(saveFunc, displayInnerRDDOps = false)
-				 */
-
-				/*import java.io.PrintStream
-				import java.net.ServerSocket
-				val server = new ServerSocket(9999)
-				val conn = server.accept
-				val out = new PrintStream(conn.getOutputStream)
-				out.println(rdd.count())*/
 			}
 		}
 
