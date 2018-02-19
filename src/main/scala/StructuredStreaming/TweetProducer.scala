@@ -21,23 +21,24 @@ object TweetProducer {
 		val tmpDirectory = "tweetFilesTmp/"
 		val directory = "tweetFiles/"
 
-		tweets
-		.foreachRDD{rdd =>
-			if (rdd.count() > 0) {
-				val fileName = "tweets_" + System.currentTimeMillis()
-				val tmpPath = new java.io.File(tmpDirectory + fileName)
-				val path = new java.io.File(directory + fileName)
+		tweets.
+			filter(_.getLang == "en").
+			foreachRDD{rdd =>
+				if (rdd.count() > 0) {
+					val fileName = "tweets_" + System.currentTimeMillis()
+					val tmpPath = new java.io.File(tmpDirectory + fileName)
+					val path = new java.io.File(directory + fileName)
 
-				File(tmpPath.toString())
-					.writeAll( rdd.filter(_.getLang == "en")
-						.map(t => t.getId + "," + t.getUser.getName + "," + (if (t.getPlace == null) "" else t.getPlace.getName)
-							+ "," + t.getInReplyToScreenName + "," + t.getCreatedAt.getTime
-							+ "," + t.getText.length + "," + t.getHashtagEntities.map(_.getText).headOption.getOrElse(""))
-						.collect().mkString("\n") )
+					File(tmpPath.toString())
+						.writeAll( rdd
+							.map(t => t.getId + "," + t.getUser.getName + "," + (if (t.getPlace == null) "" else t.getPlace.getName)
+								+ "," + t.getInReplyToScreenName + "," + t.getCreatedAt.getTime
+								+ "," + t.getText.length + "," + t.getHashtagEntities.map(_.getText).headOption.getOrElse(""))
+							.collect().mkString("\n") )
 
-				Files.move(tmpPath.toPath, path.toPath, StandardCopyOption.ATOMIC_MOVE)
+					Files.move(tmpPath.toPath, path.toPath, StandardCopyOption.ATOMIC_MOVE)
+				}
 			}
-		}
 
 		ssc.start
 		ssc.awaitTermination()

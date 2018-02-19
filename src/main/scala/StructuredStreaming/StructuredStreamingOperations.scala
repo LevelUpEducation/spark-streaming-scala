@@ -29,9 +29,9 @@ object StructuredStreamingOperations {
 			.as[(String, String)]
 			.map(_._2.split(":")) // Message format: id:userName:place:replyToScreenName:createdAt:length:firstHashtag
 			.toDF("id", "userName", "place", "replyToScreenName", "createdAt", "length", "firstHashtag")
-		   .dropDuplicates("id")
-		   .select("place", "id", "length")
-		   .groupBy("place")
+			.dropDuplicates("id")
+			.select("place", "id", "length")
+			.groupBy("place")
 			.agg(count("id"), avg("length"))
 			.writeStream.format("console")
 			.queryName("streamingOperationsOutput").start

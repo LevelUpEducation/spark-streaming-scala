@@ -12,7 +12,7 @@ object CheckpointingExercise {
 	  * Use a window duration of twenty seconds and print the output every five
 	  * seconds.
 	  * To ensure the Checkpointing works, please stop the execution a few
-	  * times after it ran for a while and start it again to make sure it picks 
+	  * times after it ran for a while and start it again to make sure it picks
 	  * up at the point where it left off. This requires that you obtain the
 	  * streaming context using StreamingContext.getOrCreate() using a custom
 	  * function as a parameter.

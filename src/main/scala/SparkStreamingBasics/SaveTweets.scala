@@ -15,7 +15,8 @@ object SaveTweets {
 
 		val tweets = TwitterUtils.createStream(ssc, None)
 
-		tweets.saveAsTextFiles("prefix", "suffix")
+		tweets.repartition(1)
+			.saveAsTextFiles("jsonTweets/batch", "json")
 
 		ssc.start
 		ssc.awaitTermination()
