@@ -4,7 +4,7 @@ import java.sql.Timestamp
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{Dataset, SparkSession}
-import org.apache.spark.sql.functions.{count, max, window}
+import org.apache.spark.sql.functions.{count, max, sum, window}
 
 object WindowOperationBonusSolution {
 	def main(args: Array[String]): Unit = {
@@ -41,13 +41,16 @@ object WindowOperationBonusSolution {
 		val query = records.
 			as[(BigInt, String, String, String, String, BigInt, String)].
 			map(r => TweetData(r._1, r._2, r._3, r._4, r._5, r._6, r._7)).
+			filter(r => r.createdAt != null && r.createdAt != "null").
 			map(t => (t.replyToScreenName, new Timestamp(t.createdAt.toLong), t.id,
-						if (t.firstHashtag == null) 0 else t.firstHashtag.length)).
-			toDF("replyToScreenName", "createdAt", "id", "hashtagLength").
+						if (t.firstHashtag == null) 0 else t.firstHashtag.length,
+						if (t.replyToScreenName == null) 0 else 1)).
+			toDF("replyToScreenName", "createdAt", "id", "hashtagLength", "reply").
 			withWatermark("createdAt", "3 minutes").
 			groupBy(window($"createdAt", "10 minutes", "30 seconds"), $"replyToScreenName").
-			agg(count("id").as("count"), count("replyToScreenName").as("replied"), max("hashtagLength")).
-			select($"count", $"replies" / $"count" as "RepliesPercentage", $"max(hashtagLength)").
+			agg(count("id").as("count"), sum("reply").as("replies"), max("hashtagLength")).
+			select($"window", $"replyToScreenName", $"count", $"replies" / $"count" * 100 as "RepliesPercentage",
+				$"max(hashtagLength)").
 			writeStream.format("console").
 			queryName("exerciseOutput").start
 
